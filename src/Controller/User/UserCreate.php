@@ -1,9 +1,11 @@
 <?php
 
-// namespace App\
+namespace App\Data;
 
 use App\Model\User;
+use Exception;
 
+require '../../../vendor/autoload.php';
 function check($check)
 {
     if ($check != null) {
@@ -26,28 +28,35 @@ try {
     check($pass_check);
 } catch (Exception $e) {
     $return = [
-        "event" => "登入訊息",
+        "event" => "創建訊息",
         "status" => "error",
-        "content" => "有欄位尚未填寫",
+        "content" => $e->getMessage(),
     ];
+
+    print_r($return);
     return $return;
 }
 
 $create = new User();
-$createStatus = $create->createUser($account, $email, $password);
+
+$createStatus = $create->createUser($account, $email, $pass);
 if ($createStatus) {
     $return = [
         "event" => "註冊成功",
         "status" => "success",
         "content" => "已註冊 # $account ，再請登入",
     ];
+    print_r($return);
+
     return $return;
 } else {
     $return = [
-        "event" => "登入訊息",
+        "event" => "創建訊息",
         "status" => "error",
-        "content" => "創建失敗，",
+        "content" => "創建失敗，信箱或是帳號已被使用",
     ];
+    print_r($return);
+
     return $return;
 }
 

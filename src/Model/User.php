@@ -4,18 +4,16 @@ namespace App\Model;
 
 use App\Config\Database;
 use PDO;
-use Exception;
 use PDOException;
 
 class user
 {
-    public function __construct()
-    {
-    }
+    // public function __construct()
+    // {
+    // }
 
     public function dbConnect()
     {
-
         $db_type = Database::DATABASE_INFO['db_type'];
         $db_host = Database::DATABASE_INFO['db_host'];
         $db_name = Database::DATABASE_INFO['db_name'];
@@ -52,10 +50,12 @@ class user
     {
         $db = $this->dbConnect();
         $check = $this->checkEmailName($account, $email);
-        if ($check) {
+
+        if ($check['name_RESULT'] || $check['email_RESULT']) {
             return 0;
         }
-        $stat = $db->prepare("INSERT INTO `users`(`account`, `email`, `password`) VALUES (?,?,?)");
+        $password = password_hash($password,  PASSWORD_DEFAULT);
+        $stat = $db->prepare("INSERT INTO `users`(`account`, `email`, `password`, `uuid`) VALUES (?,?,?,UUID())");
         $stat->execute([$account, $email, $password]);
 
         return 1;
@@ -64,9 +64,11 @@ class user
     {
         $db = $this->dbConnect();
         $stat = $db->prepare("SELECT `password` from users WHERE `account`=?");
-        $stat->execute([$account, $password]);
+        $stat->execute([$account]);
         $password_hash = $stat->fetch(PDO::FETCH_ASSOC);
-        $verify = password_verify($password, $password_hash);
+
+
+        $verify = password_verify($password, $password_hash['password']);
 
         if ($verify) {
             $req = $this->selectUser($account);

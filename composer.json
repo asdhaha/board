@@ -2,8 +2,10 @@
     "name": "wella/test_composer",
     "autoload": {
         "psr-4": {
-            "Wella\\TestComposer\\": "src/"
+            "App\\": "src/"
         }
     },
-    "require": {}
+    "require": {
+        "ext-pdo": "*"
+    }
 }
